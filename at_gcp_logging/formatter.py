@@ -23,6 +23,7 @@ class GCPJSONFormatter(logging.Formatter):
 
     def _add_default_fields_to_record(self, res, record):
         res.update({
+            'asctime': self.formatTime(record, self.datefmt),
             'name': record.name,
             'level': record.levelname,
             'pathname': record.pathname,
