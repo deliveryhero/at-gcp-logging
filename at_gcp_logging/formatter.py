@@ -1,6 +1,8 @@
 import json
 import logging
 
+from at_gcp_logging import thread_request_context
+
 
 class GCPJSONFormatter(logging.Formatter):
 
@@ -23,9 +25,12 @@ class GCPJSONFormatter(logging.Formatter):
         res.update({
             'name': record.name,
             'level': record.levelname,
+            'pathname': record.pathname,
+            'lineno': record.lineno,
             'exc_info': '' if not record.exc_info else self.formatException(record.exc_info),
             'stack_info': '' if not record.stack_info else self.formatStack(record.stack_info)
         })
+        res.update(**thread_request_context.get_request_context())
 
     def format(self, record):
         super(GCPJSONFormatter, self).format(record)

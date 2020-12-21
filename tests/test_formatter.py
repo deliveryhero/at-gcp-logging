@@ -1,27 +1,15 @@
-import logging
 import unittest
 from io import StringIO
 import json
 
-from at_gcp_logging.formatter import GCPJSONFormatter
+from tests.helpers import get_logger
 
 
 class TestFormatter(unittest.TestCase):
 
-    def _get_logger(self, name, stream, **kwargs):
-        logger = logging.getLogger(name)
-        logger.setLevel(logging.INFO)
-        handler = logging.StreamHandler(stream)
-        formatter = GCPJSONFormatter(**kwargs)
-        handler.setFormatter(formatter)
-        for h in logger.handlers:
-            logger.removeHandler(h)
-        logger.addHandler(handler)
-        return logger, handler
-
     def test_logger_default_params(self):
         stream = StringIO()
-        logger, handler = self._get_logger('test_logger_default_params', stream)
+        logger, handler = get_logger('test_logger_default_params', stream)
         logger.info('test')
         handler.flush()
         record = json.loads(stream.getvalue())
@@ -36,8 +24,8 @@ class TestFormatter(unittest.TestCase):
         format_dict = {
             'test_key': 'message'
         }
-        logger, handler = self._get_logger('test_logger_custom_params', stream,
-                                           format_dict=format_dict)
+        logger, handler = get_logger('test_logger_custom_params', stream,
+                                     format_dict=format_dict)
         test_msg = 'test msg'
         logger.info(test_msg)
         handler.flush()
@@ -46,7 +34,7 @@ class TestFormatter(unittest.TestCase):
 
     def test_logger_format_exception(self):
         stream = StringIO()
-        logger, handler = self._get_logger('test_logger_format_exception', stream)
+        logger, handler = get_logger('test_logger_format_exception', stream)
         try:
             1/0
         except Exception as e:
