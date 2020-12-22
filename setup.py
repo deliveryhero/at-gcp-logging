@@ -5,4 +5,7 @@ setup(name='at_gcp_logging',
       description='Format logs to appropriate format for GCP',
       url='https://github.com/deliveryhero/at-gcp-logging',
       author='Delivery Hero',
-      packages=['at_gcp_logging'])
+      packages=['at_gcp_logging'],
+      install_requires=[
+            'django>=1.10'
+      ])

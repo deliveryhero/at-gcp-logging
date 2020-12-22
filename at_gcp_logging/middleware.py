@@ -1,3 +1,4 @@
+from django.utils.deprecation import MiddlewareMixin
 from at_gcp_logging import thread_request_context
 
 
@@ -9,7 +10,7 @@ def _get_client_ip(request):
         return request.META.get('REMOTE_ADDR')
 
 
-class CaptureRequestData:
+class CaptureRequestData(MiddlewareMixin):
 
     def process_request(self, request):
         thread_request_context.set_request_context(
@@ -22,3 +23,4 @@ class CaptureRequestData:
 
     def process_response(self, request, response):
         thread_request_context.purge_request_context()
+        return response
