@@ -25,7 +25,7 @@ class GCPJSONFormatter(logging.Formatter):
         res.update({
             'asctime': self.formatTime(record, self.datefmt),
             'name': record.name,
-            'level': record.levelname,
+            'severity': record.levelname,
             'pathname': record.pathname,
             'lineno': record.lineno,
             'exc_info': '' if not record.exc_info else self.formatException(record.exc_info),
