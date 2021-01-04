@@ -1,3 +1,6 @@
+import json
+import logging
+
 from django.utils import timezone
 from django.utils.deprecation import MiddlewareMixin
 from at_gcp_logging import thread_request_context
@@ -24,4 +27,28 @@ class CaptureRequestData(MiddlewareMixin):
 
     def process_response(self, request, response):
         thread_request_context.purge_request_context()
+        return response
+
+
+class LogRequestsGCP(MiddlewareMixin):
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._request_start_time = None
+        self._logger = logging.getLogger(self.__class__.__name__)
+
+    def process_request(self, request):
+        self._logger.info('Received request')
+        self._request_start_time = timezone.now()
+
+    def process_response(self, request, response):
+        logger = logging.getLogger(self.__class__.__name__)
+        td = timezone.now() - self._request_start_time
+        td_in_ms = td.seconds * 1000 + td.microseconds / 1000
+        payload = {
+            'message': 'Request finished',
+            'duration_ms': td_in_ms,
+            'status': response.status_code
+        }
+        logger.info(json.dumps(payload))
         return response

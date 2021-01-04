@@ -19,6 +19,14 @@ class TestFormatter(unittest.TestCase):
         assert 'exc_info' in record
         assert 'stack_info' in record
 
+    def test_logger_default_params_json_msg(self):
+        stream = StringIO()
+        logger, handler = get_logger('test_logger_default_params', stream)
+        logger.info('{"json_data": "test"}')
+        handler.flush()
+        record = json.loads(stream.getvalue())
+        assert record['json_data'] == 'test'
+
     def test_logger_custom_params(self):
         stream = StringIO()
         format_dict = {

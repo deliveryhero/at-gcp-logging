@@ -14,12 +14,19 @@ class GCPJSONFormatter(logging.Formatter):
         super().__init__(**kwargs)
 
     def _add_user_defined_fields_to_record(self, res, record):
+        additional_json = None
         for res_key, record_key in self._format_dict.items():
             try:
                 val = record.__dict__[record_key]
+                if record_key == 'message':
+                    try:
+                        additional_json = json.loads(val)
+                    except json.decoder.JSONDecodeError:
+                        res[res_key] = val
             except KeyError:
                 raise KeyError(f'"{record_key}" is not valid formatted attribute')
-            res[res_key] = val
+            if additional_json:
+                res.update(additional_json)
 
     def _add_default_fields_to_record(self, res, record):
         res.update({
