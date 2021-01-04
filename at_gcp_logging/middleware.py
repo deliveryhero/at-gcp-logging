@@ -42,7 +42,6 @@ class LogRequestsGCP(MiddlewareMixin):
         self._request_start_time = timezone.now()
 
     def process_response(self, request, response):
-        logger = logging.getLogger(self.__class__.__name__)
         td = timezone.now() - self._request_start_time
         td_in_ms = td.seconds * 1000 + td.microseconds / 1000
         payload = {
@@ -50,5 +49,5 @@ class LogRequestsGCP(MiddlewareMixin):
             'duration_ms': td_in_ms,
             'status': response.status_code
         }
-        logger.info(json.dumps(payload))
+        self._logger.info(json.dumps(payload))
         return response
