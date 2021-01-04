@@ -1,3 +1,4 @@
+from django.utils import timezone
 from django.utils.deprecation import MiddlewareMixin
 from at_gcp_logging import thread_request_context
 

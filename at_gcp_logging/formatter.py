@@ -28,6 +28,8 @@ class GCPJSONFormatter(logging.Formatter):
             'severity': record.levelname,
             'pathname': record.pathname,
             'lineno': record.lineno,
+            'thread': record.thread,
+            'pid': record.process,
             'exc_info': '' if not record.exc_info else self.formatException(record.exc_info),
             'stack_info': '' if not record.stack_info else self.formatStack(record.stack_info)
         })
