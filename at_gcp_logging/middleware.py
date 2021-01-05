@@ -16,6 +16,9 @@ def _get_client_ip(request):
 
 class CaptureRequestData(MiddlewareMixin):
 
+    def _cleanup(self):
+        thread_request_context.purge_request_context()
+
     def process_request(self, request):
         thread_request_context.set_request_context(
             user=request.headers['user'],
@@ -26,8 +29,13 @@ class CaptureRequestData(MiddlewareMixin):
         )
 
     def process_response(self, request, response):
-        thread_request_context.purge_request_context()
+        print('CLEANUP')
+        self._cleanup()
         return response
+
+    def process_exception(self, request, exception):
+        print('CLEANUP')
+        self._cleanup()
 
 
 class LogRequestsGCP(MiddlewareMixin):
