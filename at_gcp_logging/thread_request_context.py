@@ -1,7 +1,7 @@
-import threading
+import asgiref.local
 
 
-_thread_context = threading.local()
+_thread_context = asgiref.local.Local()
 
 
 def set_request_context(**ctx):
