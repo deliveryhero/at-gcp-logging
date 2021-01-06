@@ -7,5 +7,5 @@ setup(name='at_gcp_logging',
       author='Delivery Hero',
       packages=['at_gcp_logging'],
       install_requires=[
-            'django>=1.10'
+            'django>=3.0'
       ])
