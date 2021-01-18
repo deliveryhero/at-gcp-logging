@@ -18,7 +18,7 @@ class CaptureRequestData(MiddlewareMixin):
 
     def process_request(self, request):
         thread_request_context.set_request_context(
-            user=request.headers['user'],
+            user=request.headers.get('user') or getattr(request.user, 'username', 'anonymous'),
             ip=_get_client_ip(request),
             requested_path=request.get_full_path(),
             method=request.META.get('REQUEST_METHOD'),
