@@ -26,8 +26,10 @@ class CaptureRequestData(MiddlewareMixin):
         )
 
     def process_response(self, request, response):
-        thread_request_context.purge_request_context()
-        return response
+        try:
+            thread_request_context.purge_request_context()
+        finally:
+            return response
 
 
 class LogRequestsGCP(MiddlewareMixin):
@@ -42,12 +44,14 @@ class LogRequestsGCP(MiddlewareMixin):
         self._request_start_time = timezone.now()
 
     def process_response(self, request, response):
-        td = timezone.now() - self._request_start_time
-        td_in_ms = td.seconds * 1000 + td.microseconds / 1000
-        payload = {
-            'message': 'Request finished',
-            'duration_ms': td_in_ms,
-            'status': response.status_code
-        }
-        self._logger.info(json.dumps(payload))
-        return response
+        try:
+            td = timezone.now() - self._request_start_time
+            td_in_ms = td.seconds * 1000 + td.microseconds / 1000
+            payload = {
+                'message': 'Request finished',
+                'duration_ms': td_in_ms,
+                'status': response.status_code
+            }
+            self._logger.info(json.dumps(payload))
+        finally:
+            return response
